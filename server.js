@@ -32,6 +32,31 @@ app.route('/_api/package.json')
       res.type('txt').send(data.toString());
     });
   });
+
+app.route('/:unixtime([0-9]{1,12})')
+  .get(function (req, res){
+  var jsonData = {};
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  jsonData['unix'] = req.params.unixtime;  
+  var date = new Date(req.params.unixtime*1000);
+  var natural = months[date.getMonth()] + " " +  date.getDate() + ", " + date.getFullYear();
+  jsonData['natural'] = natural;
+  res.send(jsonData);
+});
+
+app.route('/:natural') 
+  .get(function (req, res){
+  var jsonData = {}; 
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var date = new Date(req.params.natural);
+  if(date == null){
+    res.status(500).type('txt').send('TIME IS NOT VALID');
+  } else {
+    jsonData['unix'] = date.getTime()/1000;
+    jsonData['natural'] = months[date.getMonth()] + " " +  date.getDate() + ", " + date.getFullYear();;
+    res.send(jsonData);
+  }      
+});  
   
 app.route('/')
     .get(function(req, res) {
